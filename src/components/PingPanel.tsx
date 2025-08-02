@@ -136,14 +136,7 @@ export const PingPanel: React.FC<PingPanelProps> = ({
         const newStatus = result.status === 'success' ? 'online' : 
                          result.status === 'timeout' ? 'offline' : 'error';
         
-        // Play sound alerts for failures (only if both global and local sound are enabled)
-        if (globalSoundEnabled && soundEnabled && result.status !== 'success') {
-          if (result.status === 'timeout') {
-            playTimeoutAlert();
-          } else {
-            playErrorAlert();
-          }
-        }
+        // Sound alerts removed per user request
         
         setCurrentStatus(newStatus);
         onStatusChange(id, newStatus);
@@ -155,7 +148,7 @@ export const PingPanel: React.FC<PingPanelProps> = ({
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning, target, interval, id, onStatusChange, globalSoundEnabled, soundEnabled, playTimeoutAlert, playErrorAlert]);
+  }, [isRunning, target, interval, id, onStatusChange]);
 
   // Auto-scroll to bottom of log
   useEffect(() => {
