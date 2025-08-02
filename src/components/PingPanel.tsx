@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Settings, X, Play, Pause, AlertTriangle, Wifi, WifiOff, Copy, Camera } from 'lucide-react';
+import { Settings, X, Play, Pause, AlertTriangle, Wifi, WifiOff, Copy, Camera, Download } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAudioAlert } from '@/hooks/useAudioAlert';
 import { useScreenshot } from '@/hooks/useScreenshot';
@@ -208,6 +208,48 @@ export const PingPanel: React.FC<PingPanelProps> = ({
     captureElement(`ping-panel-${id}`, `${title}-${timestamp}.png`);
   }, [captureElement, id, title]);
 
+  const exportLogs = useCallback(() => {
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    const fileName = `${title.replace(/[^a-z0-9]/gi, '_')}-ping-logs-${timestamp}.txt`;
+    
+    const logContent = [
+      `Ping Log Export - ${title}`,
+      `Target: ${target}`,
+      `Export Date: ${new Date().toLocaleString()}`,
+      ``,
+      `Statistics:`,
+      `- Packets Sent: ${stats.sent}`,
+      `- Packets Received: ${stats.received}`,
+      `- Packets Lost: ${stats.lost} (${stats.sent > 0 ? ((stats.lost / stats.sent) * 100).toFixed(1) : 0}%)`,
+      `- Average Response Time: ${stats.avgTime}ms`,
+      ``,
+      `Detailed Log:`,
+      `============`,
+      ...results.map(result => {
+        const timestamp = result.timestamp.toLocaleString();
+        const status = result.status === 'success' 
+          ? `SUCCESS - time=${result.responseTime}ms`
+          : result.status === 'timeout' ? 'TIMEOUT - Request timeout' : `ERROR - ${result.error}`;
+        return `[${timestamp}] PING ${target}: ${status}`;
+      }).reverse()
+    ].join('\n');
+
+    const blob = new Blob([logContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Logs Exported",
+      description: `Ping logs saved as ${fileName}`,
+    });
+  }, [results, target, title, stats, toast]);
+
   return (
     <Card id={`ping-panel-${id}`} className={`terminal-glow bg-card border-terminal-border ${THEMES[theme as keyof typeof THEMES]} h-80 sm:h-96 flex flex-col`}>
       {/* Header */}
@@ -223,6 +265,15 @@ export const PingPanel: React.FC<PingPanelProps> = ({
           />
         </div>
         <div className="flex items-center gap-0.5 sm:gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={exportLogs}
+            className="h-5 w-5 sm:h-6 sm:w-6 text-terminal-text hover:text-terminal-accent"
+            title="Export logs to file"
+          >
+            <Download className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
