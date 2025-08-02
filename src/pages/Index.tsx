@@ -105,12 +105,12 @@ const Index = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setGlobalSoundEnabled(!globalSoundEnabled)}
-                className={`border-terminal-border text-xs ${globalSoundEnabled ? 'text-terminal-success' : 'text-terminal-error'} hover:text-terminal-accent`}
-                title={globalSoundEnabled ? 'Mute all sound alerts' : 'Enable all sound alerts'}
+                className={`border-terminal-border text-xs ${!globalSoundEnabled ? 'text-terminal-success' : 'text-terminal-error'} hover:text-terminal-accent`}
+                title={!globalSoundEnabled ? 'Mute all sound alerts' : 'Enable all sound alerts'}
               >
-                {globalSoundEnabled ? <Volume2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1" /> : <VolumeX className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />}
-                <span className="hidden sm:inline">{globalSoundEnabled ? 'Sound ON' : 'Sound OFF'}</span>
-                <span className="sm:hidden">{globalSoundEnabled ? 'ON' : 'OFF'}</span>
+                {!globalSoundEnabled ? <Volume2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1" /> : <VolumeX className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />}
+                <span className="hidden sm:inline">{!globalSoundEnabled ? 'Sound ON' : 'Sound OFF'}</span>
+                <span className="sm:hidden">{!globalSoundEnabled ? 'ON' : 'OFF'}</span>
               </Button>
               <Button
                 variant="outline"
