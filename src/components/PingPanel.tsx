@@ -23,6 +23,7 @@ interface PingPanelProps {
   onRemove: (id: string) => void;
   onStatusChange: (id: string, status: 'online' | 'offline' | 'error') => void;
   globalSoundEnabled?: boolean;
+  globalNotificationsEnabled?: boolean;
 }
 
 const THEMES = {
@@ -38,7 +39,8 @@ export const PingPanel: React.FC<PingPanelProps> = ({
   initialTitle = 'Network Target',
   onRemove,
   onStatusChange,
-  globalSoundEnabled = true
+  globalSoundEnabled = true,
+  globalNotificationsEnabled = true
 }) => {
   const [target, setTarget] = useState(initialTarget);
   const [title, setTitle] = useState(initialTitle);
@@ -190,18 +192,22 @@ export const PingPanel: React.FC<PingPanelProps> = ({
     }).join('\n');
     
     navigator.clipboard.writeText(logText).then(() => {
-      toast({
-        title: "Logs Copied",
-        description: "Ping logs copied to clipboard",
-      });
+      if (globalNotificationsEnabled) {
+        toast({
+          title: "Logs Copied",
+          description: "Ping logs copied to clipboard",
+        });
+      }
     }).catch(() => {
-      toast({
-        title: "Copy Failed",
-        description: "Could not copy logs to clipboard",
-        variant: "destructive",
-      });
+      if (globalNotificationsEnabled) {
+        toast({
+          title: "Copy Failed",
+          description: "Could not copy logs to clipboard",
+          variant: "destructive",
+        });
+      }
     });
-  }, [results, target, toast]);
+  }, [results, target, toast, globalNotificationsEnabled]);
 
   const takeScreenshot = useCallback(() => {
     const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
@@ -244,11 +250,13 @@ export const PingPanel: React.FC<PingPanelProps> = ({
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    toast({
-      title: "Logs Exported",
-      description: `Ping logs saved as ${fileName}`,
-    });
-  }, [results, target, title, stats, toast]);
+    if (globalNotificationsEnabled) {
+      toast({
+        title: "Logs Exported",
+        description: `Ping logs saved as ${fileName}`,
+      });
+    }
+  }, [results, target, title, stats, toast, globalNotificationsEnabled]);
 
   return (
     <Card id={`ping-panel-${id}`} className={`terminal-glow bg-card border-terminal-border ${THEMES[theme as keyof typeof THEMES]} h-80 sm:h-96 flex flex-col`}>

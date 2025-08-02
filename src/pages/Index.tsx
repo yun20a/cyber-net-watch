@@ -48,17 +48,20 @@ const Index = () => {
         const panel = panels.find(p => p.id === id);
         if (panel) {
           if (status === 'offline' || status === 'error') {
-            toast({
-              title: "Connection Lost",
-              description: `${panel.title} (${panel.target}) is ${status}`,
-              variant: "destructive",
-            });
+            // Only show notification if global sound is enabled (inverted logic)
+            if (globalSoundEnabled) {
+              toast({
+                title: "Connection Lost",
+                description: `${panel.title} (${panel.target}) is ${status}`,
+                variant: "destructive",
+              });
+            }
           }
         }
       }
       return { ...prev, [id]: status };
     });
-  }, [panels, toast]);
+  }, [panels, toast, globalSoundEnabled]);
 
   const getOverallStatus = () => {
     const statuses = Object.values(panelStatuses);
@@ -146,15 +149,16 @@ const Index = () => {
       {/* Panels Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4">
         {panels.map(panel => (
-          <PingPanel
-            key={panel.id}
-            id={panel.id}
-            initialTarget={panel.target}
-            initialTitle={panel.title}
-            onRemove={removePanel}
-            onStatusChange={handleStatusChange}
-            globalSoundEnabled={globalSoundEnabled}
-          />
+              <PingPanel
+                key={panel.id}
+                id={panel.id}
+                initialTarget={panel.target}
+                initialTitle={panel.title}
+                onRemove={removePanel}
+                onStatusChange={handleStatusChange}
+                globalSoundEnabled={globalSoundEnabled}
+                globalNotificationsEnabled={globalSoundEnabled}
+              />
         ))}
         <AddPanelButton onAddPanel={addPanel} />
       </div>
