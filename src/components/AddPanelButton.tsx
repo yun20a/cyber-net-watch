@@ -38,12 +38,14 @@ export const AddPanelButton: React.FC<AddPanelButtonProps> = ({ onAddPanel }) =>
       <DialogTrigger asChild>
         <Button 
           variant="outline" 
-          className="h-96 w-80 border-2 border-dashed border-terminal-border hover:border-terminal-accent text-terminal-text hover:text-terminal-accent transition-colors"
+          className="h-80 sm:h-96 w-full border-2 border-dashed border-terminal-border hover:border-terminal-accent text-terminal-text hover:text-terminal-accent transition-colors"
         >
-          <div className="flex flex-col items-center gap-2">
-            <Plus className="h-8 w-8" />
-            <span className="text-lg font-mono">Add Ping Panel</span>
-            <span className="text-xs opacity-60">Monitor new target</span>
+          <div className="flex flex-col items-center gap-2 sm:gap-4 p-4">
+            <Plus className="h-6 w-6 sm:h-8 sm:w-8" />
+            <div className="text-center">
+              <span className="text-sm sm:text-lg font-mono">Add Ping Panel</span>
+              <p className="text-xs opacity-60 mt-1">Monitor new target</p>
+            </div>
           </div>
         </Button>
       </DialogTrigger>

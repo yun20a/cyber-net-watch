@@ -209,76 +209,76 @@ export const PingPanel: React.FC<PingPanelProps> = ({
   }, [captureElement, id, title]);
 
   return (
-    <Card id={`ping-panel-${id}`} className={`terminal-glow bg-card border-terminal-border ${THEMES[theme as keyof typeof THEMES]} h-96 flex flex-col`}>
+    <Card id={`ping-panel-${id}`} className={`terminal-glow bg-card border-terminal-border ${THEMES[theme as keyof typeof THEMES]} h-80 sm:h-96 flex flex-col`}>
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-terminal-border">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between p-2 sm:p-3 border-b border-terminal-border">
+        <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
           <div className={`${getStatusColor()}`}>
             {getStatusIcon()}
           </div>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="bg-transparent border-none text-terminal-text text-sm font-mono p-0 h-auto focus:ring-0"
+            className="bg-transparent border-none text-terminal-text text-xs sm:text-sm font-mono p-0 h-auto focus:ring-0 truncate"
           />
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
           <Button
             variant="ghost"
             size="icon"
             onClick={copyLogs}
-            className="h-6 w-6 text-terminal-text hover:text-terminal-accent"
+            className="h-5 w-5 sm:h-6 sm:w-6 text-terminal-text hover:text-terminal-accent"
             title="Copy logs"
           >
-            <Copy className="h-3 w-3" />
+            <Copy className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={takeScreenshot}
-            className="h-6 w-6 text-terminal-text hover:text-terminal-accent"
+            className="h-5 w-5 sm:h-6 sm:w-6 text-terminal-text hover:text-terminal-accent"
             title="Take screenshot"
           >
-            <Camera className="h-3 w-3" />
+            <Camera className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setIsRunning(!isRunning)}
-            className="h-6 w-6 text-terminal-text hover:text-terminal-accent"
+            className="h-5 w-5 sm:h-6 sm:w-6 text-terminal-text hover:text-terminal-accent"
           >
-            {isRunning ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+            {isRunning ? <Pause className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <Play className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setShowSettings(!showSettings)}
-            className="h-6 w-6 text-terminal-text hover:text-terminal-accent"
+            className="h-5 w-5 sm:h-6 sm:w-6 text-terminal-text hover:text-terminal-accent"
           >
-            <Settings className="h-3 w-3" />
+            <Settings className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onRemove(id)}
-            className="h-6 w-6 text-terminal-error hover:text-terminal-error"
+            className="h-5 w-5 sm:h-6 sm:w-6 text-terminal-error hover:text-terminal-error"
           >
-            <X className="h-3 w-3" />
+            <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
           </Button>
         </div>
       </div>
 
       {/* Settings Panel */}
       {showSettings && (
-        <div className="p-3 border-b border-terminal-border bg-secondary/20">
-          <div className="grid grid-cols-2 gap-2 text-xs">
+        <div className="p-2 sm:p-3 border-b border-terminal-border bg-secondary/20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
             <div>
               <label className="text-terminal-text">Target:</label>
               <Input
                 value={target}
                 onChange={(e) => setTarget(e.target.value)}
                 placeholder="IP or domain"
-                className="h-6 text-xs bg-input border-terminal-border text-terminal-text"
+                className="h-6 text-xs bg-input border-terminal-border text-terminal-text w-full"
               />
             </div>
             <div>
@@ -287,7 +287,7 @@ export const PingPanel: React.FC<PingPanelProps> = ({
                 type="number"
                 value={interval}
                 onChange={(e) => setIntervalTime(Number(e.target.value))}
-                className="h-6 text-xs bg-input border-terminal-border text-terminal-text"
+                className="h-6 text-xs bg-input border-terminal-border text-terminal-text w-full"
               />
             </div>
             <div>
@@ -322,17 +322,17 @@ export const PingPanel: React.FC<PingPanelProps> = ({
       )}
 
       {/* Stats */}
-      <div className="p-2 border-b border-terminal-border">
-        <div className="flex justify-between text-xs text-terminal-text">
-          <span>Target: {target}</span>
-          <div className="flex gap-4">
-            <Badge variant="outline" className="text-xs">
+      <div className="p-1.5 sm:p-2 border-b border-terminal-border">
+        <div className="flex flex-col sm:flex-row justify-between text-xs text-terminal-text gap-1 sm:gap-0">
+          <span className="truncate">Target: {target}</span>
+          <div className="flex flex-wrap gap-1 sm:gap-4">
+            <Badge variant="outline" className="text-xs h-5">
               Sent: {stats.sent}
             </Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs h-5">
               Lost: {stats.lost}
             </Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs h-5">
               Avg: {stats.avgTime}ms
             </Badge>
           </div>
@@ -340,7 +340,7 @@ export const PingPanel: React.FC<PingPanelProps> = ({
       </div>
 
       {/* Log */}
-      <div ref={logRef} className="flex-1 p-2 overflow-y-auto font-mono text-xs">
+      <div ref={logRef} className="flex-1 p-1.5 sm:p-2 overflow-y-auto font-mono text-xs">
         {results.length === 0 ? (
           <div className="text-terminal-text opacity-50">
             {isRunning ? 'Starting ping...' : 'Ping stopped'}
