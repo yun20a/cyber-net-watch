@@ -3,7 +3,7 @@ import { PingPanel } from '@/components/PingPanel';
 import { AddPanelButton } from '@/components/AddPanelButton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Activity, Wifi, WifiOff, AlertTriangle, Camera, Volume2, VolumeX } from 'lucide-react';
+import { Activity, Wifi, WifiOff, AlertTriangle, Camera, Volume2, VolumeX, Bell, BellOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useScreenshot } from '@/hooks/useScreenshot';
 
@@ -20,6 +20,7 @@ const Index = () => {
   ]);
   const [panelStatuses, setPanelStatuses] = useState<Record<string, 'online' | 'offline' | 'error'>>({});
   const [globalSoundEnabled, setGlobalSoundEnabled] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const { toast } = useToast();
   const { captureFullScreen } = useScreenshot();
 
@@ -46,7 +47,7 @@ const Index = () => {
       const oldStatus = prev[id];
       if (oldStatus && oldStatus !== status) {
         const panel = panels.find(p => p.id === id);
-        if (panel) {
+        if (panel && notificationsEnabled) {
           if (status === 'offline' || status === 'error') {
             toast({
               title: "Connection Lost",
@@ -58,7 +59,7 @@ const Index = () => {
       }
       return { ...prev, [id]: status };
     });
-  }, [panels, toast]);
+  }, [panels, toast, notificationsEnabled]);
 
   const getOverallStatus = () => {
     const statuses = Object.values(panelStatuses);
@@ -109,8 +110,19 @@ const Index = () => {
                 title={globalSoundEnabled ? 'Mute all sound alerts' : 'Enable all sound alerts'}
               >
                 {globalSoundEnabled ? <Volume2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1" /> : <VolumeX className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />}
-                <span className="hidden sm:inline">{globalSoundEnabled ? 'Sound ON' : 'Sound OFF'}</span>
-                <span className="sm:hidden">{globalSoundEnabled ? 'ON' : 'OFF'}</span>
+                <span className="hidden sm:inline">Sound</span>
+                <span className="sm:hidden">♪</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                className={`border-terminal-border text-xs ${notificationsEnabled ? 'text-terminal-success' : 'text-terminal-error'} hover:text-terminal-accent`}
+                title={notificationsEnabled ? 'Mute all notifications' : 'Enable all notifications'}
+              >
+                {notificationsEnabled ? <Bell className="h-3 w-3 sm:h-4 sm:w-4 mr-1" /> : <BellOff className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />}
+                <span className="hidden sm:inline">Notifications</span>
+                <span className="sm:hidden">🔔</span>
               </Button>
               <Button
                 variant="outline"
