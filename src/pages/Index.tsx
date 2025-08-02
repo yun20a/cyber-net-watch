@@ -15,11 +15,12 @@ interface Panel {
 
 const Index = () => {
   const [panels, setPanels] = useState<Panel[]>([
-    { id: '1', target: '192.168.1.1', title: 'Local Gateway' },
-    { id: '2', target: '8.8.8.8', title: 'Google DNS' }
+    { id: '1', target: '192.168.1.1', title: 'Local Gateway' }
   ]);
   const [panelStatuses, setPanelStatuses] = useState<Record<string, 'online' | 'offline' | 'error'>>({});
   const [globalSoundEnabled, setGlobalSoundEnabled] = useState(true);
+  const [internetConnected, setInternetConnected] = useState<boolean | null>(null);
+  const [packetLossHistory, setPacketLossHistory] = useState<number[]>([]);
   const { toast } = useToast();
   const { captureFullScreen } = useScreenshot();
 
@@ -44,24 +45,42 @@ const Index = () => {
   const handleStatusChange = useCallback((id: string, status: 'online' | 'offline' | 'error') => {
     setPanelStatuses(prev => {
       const oldStatus = prev[id];
-      if (oldStatus && oldStatus !== status) {
-        const panel = panels.find(p => p.id === id);
-        if (panel) {
-          if (status === 'offline' || status === 'error') {
-            // Only show notification if global sound is enabled (inverted logic)
-            if (globalSoundEnabled) {
-              toast({
-                title: "Connection Lost",
-                description: `${panel.title} (${panel.target}) is ${status}`,
-                variant: "destructive",
-              });
+      const newStatus = { ...prev, [id]: status };
+      
+      // Track packet loss for local gateway (internet connectivity)
+      const panel = panels.find(p => p.id === id);
+      if (panel && panel.target === '192.168.1.1') {
+        setPacketLossHistory(prevHistory => {
+          const newHistory = [...prevHistory, status === 'online' ? 0 : 1].slice(-20); // Keep last 20 pings
+          const totalPings = newHistory.length;
+          const lostPings = newHistory.reduce((sum, val) => sum + val, 0);
+          const packetLossPercentage = totalPings > 0 ? (lostPings / totalPings) * 100 : 0;
+          
+          // Check for internet connectivity change (10% threshold)
+          if (totalPings >= 10) {
+            const wasConnected = internetConnected;
+            const isConnected = packetLossPercentage < 10;
+            
+            if (wasConnected !== null && wasConnected !== isConnected) {
+              if (globalSoundEnabled) {
+                toast({
+                  title: isConnected ? "Internet Connected" : "Internet Disconnected",
+                  description: `Packet loss: ${packetLossPercentage.toFixed(1)}%`,
+                  variant: isConnected ? "default" : "destructive",
+                });
+              }
             }
+            
+            setInternetConnected(isConnected);
           }
-        }
+          
+          return newHistory;
+        });
       }
-      return { ...prev, [id]: status };
+      
+      return newStatus;
     });
-  }, [panels, toast, globalSoundEnabled]);
+  }, [panels, toast, globalSoundEnabled, internetConnected]);
 
   const getOverallStatus = () => {
     const statuses = Object.values(panelStatuses);
@@ -93,13 +112,16 @@ const Index = () => {
             <div className="terminal-glow p-1.5 sm:p-2 rounded border border-terminal-border">
               {getStatusIcon()}
             </div>
-            <div>
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-mono font-bold text-terminal-accent terminal-text-glow">
-                NETWORK PING MONITOR
-              </h1>
-              <p className="text-terminal-text text-xs sm:text-sm">
-                Real-time network connectivity monitoring system
-              </p>
+            <div className="flex items-center gap-2">
+              <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-terminal-accent" />
+              <div>
+                <h1 className="text-terminal-text text-sm sm:text-lg font-bold font-mono">
+                  NETWORK PING MONITOR
+                </h1>
+                <p className="text-terminal-text text-xs sm:text-sm">
+                  Internet connectivity: {internetConnected === null ? 'Detecting...' : internetConnected ? 'Connected' : 'Disconnected'}
+                </p>
+              </div>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
