@@ -143,7 +143,7 @@ const Index = () => {
 
       {/* Footer */}
       <div className="mt-8 text-center text-terminal-text opacity-60 text-xs font-mono">
-        <p>NETWORK MONITORING SYSTEM v1.0 | Real-time ping diagnostics</p>
+        <p>NETWORK MONITORING SYSTEM BY MR0D12 v1.0 | Real-time ping diagnostics</p>
         <p className="cursor">Press CTRL+C to terminate_</p>
       </div>
     </div>
