@@ -155,7 +155,7 @@ export const PingPanel: React.FC<PingPanelProps> = ({
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning, target, interval, id, onStatusChange]);
+  }, [isRunning, target, interval, id, onStatusChange, globalSoundEnabled, soundEnabled, playTimeoutAlert, playErrorAlert]);
 
   // Auto-scroll to bottom of log
   useEffect(() => {
