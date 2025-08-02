@@ -3,7 +3,7 @@ import { PingPanel } from '@/components/PingPanel';
 import { AddPanelButton } from '@/components/AddPanelButton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Activity, Wifi, WifiOff, AlertTriangle, Camera } from 'lucide-react';
+import { Activity, Wifi, WifiOff, AlertTriangle, Camera, Volume2, VolumeX } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useScreenshot } from '@/hooks/useScreenshot';
 
@@ -19,6 +19,7 @@ const Index = () => {
     { id: '2', target: '8.8.8.8', title: 'Google DNS' }
   ]);
   const [panelStatuses, setPanelStatuses] = useState<Record<string, 'online' | 'offline' | 'error'>>({});
+  const [globalSoundEnabled, setGlobalSoundEnabled] = useState(true);
   const { toast } = useToast();
   const { captureFullScreen } = useScreenshot();
 
@@ -102,6 +103,16 @@ const Index = () => {
             <Button
               variant="outline"
               size="sm"
+              onClick={() => setGlobalSoundEnabled(!globalSoundEnabled)}
+              className={`border-terminal-border ${globalSoundEnabled ? 'text-terminal-success' : 'text-terminal-error'} hover:text-terminal-accent`}
+              title={globalSoundEnabled ? 'Mute all sound alerts' : 'Enable all sound alerts'}
+            >
+              {globalSoundEnabled ? <Volume2 className="h-4 w-4 mr-1" /> : <VolumeX className="h-4 w-4 mr-1" />}
+              {globalSoundEnabled ? 'Sound ON' : 'Sound OFF'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={captureFullScreen}
               className="border-terminal-border text-terminal-text hover:text-terminal-accent"
             >
@@ -136,6 +147,7 @@ const Index = () => {
             initialTitle={panel.title}
             onRemove={removePanel}
             onStatusChange={handleStatusChange}
+            globalSoundEnabled={globalSoundEnabled}
           />
         ))}
         <AddPanelButton onAddPanel={addPanel} />

@@ -22,6 +22,7 @@ interface PingPanelProps {
   initialTitle?: string;
   onRemove: (id: string) => void;
   onStatusChange: (id: string, status: 'online' | 'offline' | 'error') => void;
+  globalSoundEnabled?: boolean;
 }
 
 const THEMES = {
@@ -36,7 +37,8 @@ export const PingPanel: React.FC<PingPanelProps> = ({
   initialTarget = '8.8.8.8',
   initialTitle = 'Network Target',
   onRemove,
-  onStatusChange
+  onStatusChange,
+  globalSoundEnabled = true
 }) => {
   const [target, setTarget] = useState(initialTarget);
   const [title, setTitle] = useState(initialTitle);
@@ -132,8 +134,8 @@ export const PingPanel: React.FC<PingPanelProps> = ({
         const newStatus = result.status === 'success' ? 'online' : 
                          result.status === 'timeout' ? 'offline' : 'error';
         
-        // Play sound alerts for failures
-        if (soundEnabled && result.status !== 'success') {
+        // Play sound alerts for failures (only if both global and local sound are enabled)
+        if (globalSoundEnabled && soundEnabled && result.status !== 'success') {
           if (result.status === 'timeout') {
             playTimeoutAlert();
           } else {
@@ -308,10 +310,11 @@ export const PingPanel: React.FC<PingPanelProps> = ({
                 id={`sound-${id}`}
                 checked={soundEnabled}
                 onChange={(e) => setSoundEnabled(e.target.checked)}
+                disabled={!globalSoundEnabled}
                 className="h-3 w-3"
               />
-              <label htmlFor={`sound-${id}`} className="text-terminal-text text-xs">
-                Sound alerts
+              <label htmlFor={`sound-${id}`} className={`text-xs ${!globalSoundEnabled ? 'opacity-50' : 'text-terminal-text'}`}>
+                Panel sound alerts {!globalSoundEnabled && '(Global OFF)'}
               </label>
             </div>
           </div>
