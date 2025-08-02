@@ -2,95 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Network Ping Monitor - Hacker Terminal Theme
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Terminal/Hacker Theme */
+    --background: 0 0% 5%;
+    --foreground: 120 100% 75%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 8%;
+    --card-foreground: 120 100% 75%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 120 100% 75%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 120 100% 50%;
+    --primary-foreground: 0 0% 5%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 120 100% 75%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 120 60% 60%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 120 100% 40%;
+    --accent-foreground: 0 0% 5%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --success: 120 100% 50%;
+    --success-foreground: 0 0% 5%;
 
-    --radius: 0.5rem;
+    --warning: 45 100% 50%;
+    --warning-foreground: 0 0% 5%;
 
-    --sidebar-background: 0 0% 98%;
+    --border: 120 30% 25%;
+    --input: 0 0% 15%;
+    --ring: 120 100% 50%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --radius: 0.25rem;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Terminal specific colors */
+    --terminal-bg: 0 0% 5%;
+    --terminal-text: 120 100% 75%;
+    --terminal-accent: 120 100% 50%;
+    --terminal-error: 0 100% 50%;
+    --terminal-warning: 45 100% 50%;
+    --terminal-success: 120 100% 50%;
+    --terminal-border: 120 30% 25%;
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    /* Glow effects */
+    --glow-primary: 0 0 20px hsl(120 100% 50% / 0.5);
+    --glow-error: 0 0 20px hsl(0 100% 50% / 0.5);
+    --glow-success: 0 0 20px hsl(120 100% 50% / 0.3);
 
-    --sidebar-accent: 240 4.8% 95.9%;
+    /* Animations */
+    --transition-fast: all 0.15s ease;
+    --transition-smooth: all 0.3s ease;
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 8%;
+    --sidebar-foreground: 120 100% 75%;
+    --sidebar-primary: 120 100% 50%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 120 100% 75%;
+    --sidebar-border: 120 30% 25%;
+    --sidebar-ring: 120 100% 50%;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  /* Alternative terminal themes */
+  .theme-blue {
+    --terminal-text: 200 100% 75%;
+    --terminal-accent: 200 100% 50%;
+    --glow-primary: 0 0 20px hsl(200 100% 50% / 0.5);
+  }
+  
+  .theme-purple {
+    --terminal-text: 280 100% 75%;
+    --terminal-accent: 280 100% 50%;
+    --glow-primary: 0 0 20px hsl(280 100% 50% / 0.5);
+  }
+  
+  .theme-orange {
+    --terminal-text: 30 100% 75%;
+    --terminal-accent: 30 100% 50%;
+    --glow-primary: 0 0 20px hsl(30 100% 50% / 0.5);
   }
 }
 
@@ -100,6 +99,57 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-mono;
+    overflow-x: auto;
+  }
+
+  /* Terminal-style scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--terminal-bg));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--terminal-accent));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--terminal-text));
+  }
+
+  /* Terminal glow effects */
+  .terminal-glow {
+    box-shadow: var(--glow-primary);
+  }
+
+  .terminal-text-glow {
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  /* Blinking cursor animation */
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  .cursor {
+    animation: blink 1s infinite;
+  }
+
+  /* Matrix-style animation */
+  @keyframes matrix {
+    0% { transform: translateY(-100%); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+
+  .matrix-rain {
+    animation: matrix 3s linear infinite;
   }
 }
