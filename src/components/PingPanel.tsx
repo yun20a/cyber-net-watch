@@ -323,19 +323,12 @@ export const PingPanel: React.FC<PingPanelProps> = ({
 
       {/* Stats */}
       <div className="p-1.5 sm:p-2 border-b border-terminal-border">
-        <div className="flex flex-col sm:flex-row justify-between text-xs text-terminal-text gap-1 sm:gap-0">
-          <span className="truncate">Target: {target}</span>
-          <div className="flex flex-wrap gap-1 sm:gap-4">
-            <Badge variant="outline" className="text-xs h-5">
-              Sent: {stats.sent}
-            </Badge>
-            <Badge variant="outline" className="text-xs h-5">
-              Lost: {stats.lost}
-            </Badge>
-            <Badge variant="outline" className="text-xs h-5">
-              Avg: {stats.avgTime}ms
-            </Badge>
-          </div>
+        <div className="flex flex-col gap-2">
+          <span className="truncate text-xs text-terminal-text">Target: {target}</span>
+          <Button variant="outline" className="w-full justify-between text-xs h-6 px-2">
+            <span>Sent: {stats.sent} | Lost: {stats.lost}</span>
+            <span>Avg: {stats.avgTime}ms</span>
+          </Button>
         </div>
       </div>
 
