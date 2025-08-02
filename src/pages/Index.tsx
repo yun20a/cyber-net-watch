@@ -3,8 +3,9 @@ import { PingPanel } from '@/components/PingPanel';
 import { AddPanelButton } from '@/components/AddPanelButton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Activity, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
+import { Activity, Wifi, WifiOff, AlertTriangle, Camera } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useScreenshot } from '@/hooks/useScreenshot';
 
 interface Panel {
   id: string;
@@ -19,6 +20,7 @@ const Index = () => {
   ]);
   const [panelStatuses, setPanelStatuses] = useState<Record<string, 'online' | 'offline' | 'error'>>({});
   const { toast } = useToast();
+  const { captureFullScreen } = useScreenshot();
 
   const addPanel = useCallback((target: string, title: string) => {
     const newPanel = {
@@ -97,6 +99,15 @@ const Index = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={captureFullScreen}
+              className="border-terminal-border text-terminal-text hover:text-terminal-accent"
+            >
+              <Camera className="h-4 w-4 mr-1" />
+              Full Screenshot
+            </Button>
             <Badge variant="outline" className="border-terminal-border">
               <span className="text-terminal-success">{onlineCount}</span>
               <span className="text-terminal-text mx-1">/</span>

@@ -1,10 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Settings, X, Play, Pause, AlertTriangle, Wifi, WifiOff } from 'lucide-react';
+import { Settings, X, Play, Pause, AlertTriangle, Wifi, WifiOff, Copy, Camera } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useAudioAlert } from '@/hooks/useAudioAlert';
+import { useScreenshot } from '@/hooks/useScreenshot';
+import { useToast } from '@/hooks/use-toast';
 
 interface PingResult {
   timestamp: Date;
@@ -44,9 +47,13 @@ export const PingPanel: React.FC<PingPanelProps> = ({
   const [currentStatus, setCurrentStatus] = useState<'online' | 'offline' | 'error'>('offline');
   const [stats, setStats] = useState({ sent: 0, received: 0, lost: 0, avgTime: 0 });
   const [showSettings, setShowSettings] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   
   const intervalRef = useRef<NodeJS.Timeout>();
   const logRef = useRef<HTMLDivElement>(null);
+  const { playErrorAlert, playTimeoutAlert } = useAudioAlert();
+  const { captureElement } = useScreenshot();
+  const { toast } = useToast();
 
   // Simulate ping using HTTP request with timeout
   const performPing = async (targetUrl: string): Promise<PingResult> => {
@@ -121,9 +128,19 @@ export const PingPanel: React.FC<PingPanelProps> = ({
           return { sent, received, lost, avgTime: Math.round(avgTime) };
         });
 
-        // Update status
+        // Update status and play sound alerts
         const newStatus = result.status === 'success' ? 'online' : 
                          result.status === 'timeout' ? 'offline' : 'error';
+        
+        // Play sound alerts for failures
+        if (soundEnabled && result.status !== 'success') {
+          if (result.status === 'timeout') {
+            playTimeoutAlert();
+          } else {
+            playErrorAlert();
+          }
+        }
+        
         setCurrentStatus(newStatus);
         onStatusChange(id, newStatus);
       }, interval);
@@ -161,8 +178,36 @@ export const PingPanel: React.FC<PingPanelProps> = ({
     }
   };
 
+  const copyLogs = useCallback(() => {
+    const logText = results.map(result => {
+      const timestamp = result.timestamp.toLocaleString();
+      const status = result.status === 'success' 
+        ? `time=${result.responseTime}ms`
+        : result.status === 'timeout' ? 'Request timeout' : result.error;
+      return `[${timestamp}] PING ${target}: ${status}`;
+    }).join('\n');
+    
+    navigator.clipboard.writeText(logText).then(() => {
+      toast({
+        title: "Logs Copied",
+        description: "Ping logs copied to clipboard",
+      });
+    }).catch(() => {
+      toast({
+        title: "Copy Failed",
+        description: "Could not copy logs to clipboard",
+        variant: "destructive",
+      });
+    });
+  }, [results, target, toast]);
+
+  const takeScreenshot = useCallback(() => {
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    captureElement(`ping-panel-${id}`, `${title}-${timestamp}.png`);
+  }, [captureElement, id, title]);
+
   return (
-    <Card className={`terminal-glow bg-card border-terminal-border ${THEMES[theme as keyof typeof THEMES]} h-96 flex flex-col`}>
+    <Card id={`ping-panel-${id}`} className={`terminal-glow bg-card border-terminal-border ${THEMES[theme as keyof typeof THEMES]} h-96 flex flex-col`}>
       {/* Header */}
       <div className="flex items-center justify-between p-3 border-b border-terminal-border">
         <div className="flex items-center gap-2">
@@ -176,6 +221,24 @@ export const PingPanel: React.FC<PingPanelProps> = ({
           />
         </div>
         <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={copyLogs}
+            className="h-6 w-6 text-terminal-text hover:text-terminal-accent"
+            title="Copy logs"
+          >
+            <Copy className="h-3 w-3" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={takeScreenshot}
+            className="h-6 w-6 text-terminal-text hover:text-terminal-accent"
+            title="Take screenshot"
+          >
+            <Camera className="h-3 w-3" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -238,6 +301,18 @@ export const PingPanel: React.FC<PingPanelProps> = ({
                   <SelectItem value="orange">Orange</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id={`sound-${id}`}
+                checked={soundEnabled}
+                onChange={(e) => setSoundEnabled(e.target.checked)}
+                className="h-3 w-3"
+              />
+              <label htmlFor={`sound-${id}`} className="text-terminal-text text-xs">
+                Sound alerts
+              </label>
             </div>
           </div>
         </div>
